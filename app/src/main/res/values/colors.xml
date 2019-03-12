@@ -10,4 +10,7 @@
     <color name="current_time_bg">#FFFFFF</color>
     <color name="current_time_text">#666666</color>
     <color name="selected_time_text">#57C5E8</color>
+    <color name="delete">#F44336</color>
+    <color name="delete_botton_solid">#FF9800</color>
+    <color name="delete_botton_shape">#F1ECEC</color>
 </resources>

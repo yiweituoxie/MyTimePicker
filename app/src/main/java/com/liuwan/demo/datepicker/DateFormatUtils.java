@@ -61,10 +61,9 @@ public class DateFormatUtils {
      * 字符串转时间戳
      *
      * @param dateStr       日期字符串
-     * @param isPreciseTime 是否包含时分
      * @return 时间戳
      */
-    public static long str2Long2(String dateStr, boolean isPreciseTime) {
+    public static long str2Long2(String dateStr) {
         return str2Long(dateStr, getFormatPattern2());
     }
 
@@ -72,10 +71,9 @@ public class DateFormatUtils {
      * 时间戳转字符串
      *
      * @param timestamp     时间戳
-     * @param isPreciseTime 是否包含时分
      * @return 格式化的日期字符串
      */
-    public static String long2Str2(long timestamp, boolean isPreciseTime) {
+    public static String long2Str2(long timestamp) {
         return long2Str2(timestamp, getFormatPattern2());
     }
 

@@ -7,15 +7,6 @@
     android:orientation="vertical"
     tools:ignore="RtlSymmetry">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@null"
-        android:gravity="center_vertical"
-        android:paddingStart="15dp"
-        android:text="@string/select_time"
-        android:textColor="@color/select_title_text"
-        android:textSize="15sp" />
 
     <LinearLayout
         android:id="@+id/ll_my_time"
@@ -31,7 +22,7 @@
             android:layout_marginStart="15dp"
             android:background="@null"
             android:gravity="center_vertical"
-            android:text="@string/current_time"
+            android:text="@string/select_time"
             android:textColor="@color/current_time_text"
             android:textSize="15sp" />
 
@@ -53,4 +44,30 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@null"
+        android:gravity="center_vertical"
+        android:paddingStart="15dp"
+        android:text="@string/selected_time"
+        android:textColor="@color/select_title_text"
+        android:textSize="15sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"></android.support.v7.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/btn_send"
+        android:layout_marginTop="10dp"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:background="@drawable/delete_button"
+        android:textSize="50sp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textColor="@color/date_picker_bg"
+        android:text="@string/send"/>
 </LinearLayout>

@@ -26,25 +26,16 @@ public class MyDatePicker implements View.OnClickListener, PickerView.OnSelectLi
 
     private Dialog mPickerDialog;
     private PickerView mDpvHour, mDpvMinute, mDpvSecond;
-    private TextView mTvHourUnit, mTvMinuteUnit, mTvSecondUnit;
 
-    private int mBeginHour, mBeginMinute;
-    private List<String> mHourUnits = new ArrayList<>(), mMinuteUnits = new ArrayList<>();
+    private int mBeginHour, mBeginMinute, mBeginSecond;
+    private List<String> mHourUnits = new ArrayList<>(), mMinuteUnits = new ArrayList<>(), mSecondUnits = new ArrayList<>();
     private DecimalFormat mDecimalFormat = new DecimalFormat("00");
 
-    private boolean mCanShowPreciseTime;
-    private int mScrollUnits = SCROLL_UNIT_HOUR + SCROLL_UNIT_MINUTE;
-
-    /**
-     * 时间单位：时、分
-     */
-    private static final int SCROLL_UNIT_HOUR = 0b1;
-    private static final int SCROLL_UNIT_MINUTE = 0b10;
-    private static final int SCROLL_UNIT_SECOND = 0b10;
 
     /**
      * 时间单位的最大显示值
      */
+    private static final int MAX_SECOND_UNIT = 59;
     private static final int MAX_MINUTE_UNIT = 59;
     private static final int MAX_HOUR_UNIT = 23;
 
@@ -109,13 +100,13 @@ public class MyDatePicker implements View.OnClickListener, PickerView.OnSelectLi
 
         mPickerDialog.findViewById(R.id.tv_cancel).setOnClickListener(this);
         mPickerDialog.findViewById(R.id.tv_confirm).setOnClickListener(this);
-        mTvHourUnit = mPickerDialog.findViewById(R.id.tv_hour_unit);
-        mTvMinuteUnit = mPickerDialog.findViewById(R.id.tv_minute_unit);
 
         mDpvHour = mPickerDialog.findViewById(R.id.dpv_hour);
         mDpvHour.setOnSelectListener(this);
         mDpvMinute = mPickerDialog.findViewById(R.id.dpv_minute);
         mDpvMinute.setOnSelectListener(this);
+        mDpvSecond = mPickerDialog.findViewById(R.id.dpv_second);
+        mDpvSecond.setOnSelectListener(this);
     }
 
     @Override
@@ -150,11 +141,13 @@ public class MyDatePicker implements View.OnClickListener, PickerView.OnSelectLi
         switch (view.getId()) {
             case R.id.dpv_hour:
                 mSelectedTime.set(Calendar.HOUR_OF_DAY, timeUnit);
-//                linkageMinuteUnit(true);
                 break;
 
             case R.id.dpv_minute:
                 mSelectedTime.set(Calendar.MINUTE, timeUnit);
+                break;
+            case R.id.dpv_second:
+                mSelectedTime.set(Calendar.SECOND, timeUnit);
                 break;
         }
     }
@@ -164,31 +157,33 @@ public class MyDatePicker implements View.OnClickListener, PickerView.OnSelectLi
 
         mBeginHour = mCurrentTime.get(Calendar.HOUR_OF_DAY);
         mBeginMinute = mCurrentTime.get(Calendar.MINUTE);
+        mBeginSecond = mCurrentTime.get(Calendar.SECOND);
 
         initDateUnits();
     }
 
     private void initDateUnits() {
 
-        if ((mScrollUnits & SCROLL_UNIT_HOUR) != SCROLL_UNIT_HOUR) {
-            mHourUnits.add(mDecimalFormat.format(mBeginHour));
-        }
+        mHourUnits.add(mDecimalFormat.format(mBeginHour));
 
-        if ((mScrollUnits & SCROLL_UNIT_MINUTE) != SCROLL_UNIT_MINUTE) {
-            mMinuteUnits.add(mDecimalFormat.format(mBeginMinute));
-        }
+        mMinuteUnits.add(mDecimalFormat.format(mBeginMinute));
+
+        mSecondUnits.add(mDecimalFormat.format(mBeginSecond));
 
         mDpvHour.setDataList(mHourUnits);
         mDpvHour.setSelected(0);
         mDpvMinute.setDataList(mMinuteUnits);
         mDpvMinute.setSelected(0);
+        mDpvSecond.setDataList(mSecondUnits);
+        mDpvSecond.setSelected(0);
 
         setCanScroll();
     }
 
     private void setCanScroll() {
-        mDpvHour.setCanScroll(mHourUnits.size() > 1 && (mScrollUnits & SCROLL_UNIT_HOUR) == SCROLL_UNIT_HOUR);
-        mDpvMinute.setCanScroll(mMinuteUnits.size() > 1 && (mScrollUnits & SCROLL_UNIT_MINUTE) == SCROLL_UNIT_MINUTE);
+        mDpvHour.setCanScroll(true);
+        mDpvMinute.setCanScroll(true);
+        mDpvSecond.setCanScroll(true);
     }
 
     /**
@@ -198,28 +193,26 @@ public class MyDatePicker implements View.OnClickListener, PickerView.OnSelectLi
      * @param delay    联动下一级延迟时间
      */
     private void linkageHourUnit(final boolean showAnim, final long delay) {
-        if ((mScrollUnits & SCROLL_UNIT_HOUR) == SCROLL_UNIT_HOUR) {
-            int minHour = 0;
-            int maxHour = MAX_HOUR_UNIT;
+        int minHour = 0;
+        int maxHour = MAX_HOUR_UNIT;
 
-            mHourUnits.clear();
-            for (int i = minHour; i <= maxHour; i++) {
-                mHourUnits.add(mDecimalFormat.format(i));
-            }
-            mDpvHour.setDataList(mHourUnits);
+        mHourUnits.clear();
+        for (int i = minHour; i <= maxHour; i++) {
+            mHourUnits.add(mDecimalFormat.format(i));
+        }
+        mDpvHour.setDataList(mHourUnits);
 
-            int selectedHour = getValueInRange(mSelectedTime.get(Calendar.HOUR_OF_DAY), minHour, maxHour);
-            mSelectedTime.set(Calendar.HOUR_OF_DAY, selectedHour);
-            mDpvHour.setSelected(selectedHour - minHour);
-            if (showAnim) {
-                mDpvHour.startAnim();
-            }
+        int selectedHour = getValueInRange(mSelectedTime.get(Calendar.HOUR_OF_DAY), minHour, maxHour);
+        mSelectedTime.set(Calendar.HOUR_OF_DAY, selectedHour);
+        mDpvHour.setSelected(selectedHour - minHour);
+        if (showAnim) {
+            mDpvHour.startAnim();
         }
 
         mDpvHour.postDelayed(new Runnable() {
             @Override
             public void run() {
-                linkageMinuteUnit(showAnim);
+                linkageMinuteUnit(showAnim, delay);
             }
         }, delay);
     }
@@ -229,22 +222,48 @@ public class MyDatePicker implements View.OnClickListener, PickerView.OnSelectLi
      *
      * @param showAnim 是否展示滚动动画
      */
-    private void linkageMinuteUnit(final boolean showAnim) {
-        if ((mScrollUnits & SCROLL_UNIT_MINUTE) == SCROLL_UNIT_MINUTE) {
-            int minMinute = 0;
-            int maxMinute = MAX_MINUTE_UNIT;
-            mMinuteUnits.clear();
-            for (int i = minMinute; i <= maxMinute; i++) {
-                mMinuteUnits.add(mDecimalFormat.format(i));
-            }
-            mDpvMinute.setDataList(mMinuteUnits);
+    private void linkageMinuteUnit(final boolean showAnim, final long delay) {
+        int minMinute = 0;
+        int maxMinute = MAX_MINUTE_UNIT;
+        mMinuteUnits.clear();
+        for (int i = minMinute; i <= maxMinute; i++) {
+            mMinuteUnits.add(mDecimalFormat.format(i));
+        }
+        mDpvMinute.setDataList(mMinuteUnits);
 
-            int selectedMinute = getValueInRange(mSelectedTime.get(Calendar.MINUTE), minMinute, maxMinute);
-            mSelectedTime.set(Calendar.MINUTE, selectedMinute);
-            mDpvMinute.setSelected(selectedMinute - minMinute);
-            if (showAnim) {
-                mDpvMinute.startAnim();
+        int selectedMinute = getValueInRange(mSelectedTime.get(Calendar.MINUTE), minMinute, maxMinute);
+        mSelectedTime.set(Calendar.MINUTE, selectedMinute);
+        mDpvMinute.setSelected(selectedMinute - minMinute);
+        if (showAnim) {
+            mDpvMinute.startAnim();
+        }
+        mDpvMinute.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                linkageSecondUnit(showAnim);
             }
+        }, delay);
+    }
+
+    /**
+     * 联动“秒”变化
+     *
+     * @param showAnim 是否展示滚动动画
+     */
+    private void linkageSecondUnit(final boolean showAnim) {
+        int minSecond = 0;
+        int maxSecond = MAX_SECOND_UNIT;
+        mSecondUnits.clear();
+        for (int i = minSecond; i <= maxSecond; i++) {
+            mSecondUnits.add(mDecimalFormat.format(i));
+        }
+        mDpvSecond.setDataList(mSecondUnits);
+
+        int selectedSecond = getValueInRange(mSelectedTime.get(Calendar.SECOND), minSecond, maxSecond);
+        mSelectedTime.set(Calendar.SECOND, selectedSecond);
+        mDpvSecond.setSelected(selectedSecond - minSecond);
+        if (showAnim) {
+            mDpvSecond.startAnim();
         }
 
         setCanScroll();
@@ -287,7 +306,7 @@ public class MyDatePicker implements View.OnClickListener, PickerView.OnSelectLi
      */
     public boolean setSelectedTime(String dateStr, boolean showAnim) {
         return canShow() && !TextUtils.isEmpty(dateStr)
-                && setSelectedTime(DateFormatUtils.str2Long2(dateStr, mCanShowPreciseTime), showAnim);
+                && setSelectedTime(DateFormatUtils.str2Long2(dateStr), showAnim);
     }
 
     /**
@@ -327,37 +346,6 @@ public class MyDatePicker implements View.OnClickListener, PickerView.OnSelectLi
         mPickerDialog.setCancelable(cancelable);
     }
 
-    /**
-     * 设置日期控件是否显示时和分
-     */
-    public void setCanShowPreciseTime(boolean canShowPreciseTime) {
-        if (!canShow()) return;
-
-        if (canShowPreciseTime) {
-            initScrollUnit();
-            mDpvHour.setVisibility(View.VISIBLE);
-            mTvHourUnit.setVisibility(View.VISIBLE);
-            mDpvMinute.setVisibility(View.VISIBLE);
-            mTvMinuteUnit.setVisibility(View.VISIBLE);
-        } else {
-            initScrollUnit(SCROLL_UNIT_HOUR, SCROLL_UNIT_MINUTE);
-            mDpvHour.setVisibility(View.GONE);
-            mTvHourUnit.setVisibility(View.GONE);
-            mDpvMinute.setVisibility(View.GONE);
-            mTvMinuteUnit.setVisibility(View.GONE);
-        }
-        mCanShowPreciseTime = canShowPreciseTime;
-    }
-
-    private void initScrollUnit(Integer... units) {
-        if (units == null || units.length == 0) {
-            mScrollUnits = SCROLL_UNIT_HOUR + SCROLL_UNIT_MINUTE;
-        } else {
-            for (int unit : units) {
-                mScrollUnits ^= unit;
-            }
-        }
-    }
 
     /**
      * 设置日期控件是否可以循环滚动
