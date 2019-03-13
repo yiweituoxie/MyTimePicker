@@ -52,6 +52,7 @@ public class MyActivity extends Activity implements View.OnClickListener {
                 } else {
                     String code = transTimeList();
                     Toast.makeText(MyActivity.this, code, Toast.LENGTH_LONG).show();
+                    //TODO 发送指令
                 }
 
                 break;
@@ -67,14 +68,15 @@ public class MyActivity extends Activity implements View.OnClickListener {
     private void initMyTimerPicker() {
         String currentTime = DateFormatUtils.long2Str2(System.currentTimeMillis());
 
-        mTvMySelectedTime.setText(currentTime);
+//        mTvMySelectedTime.setText(currentTime);
+        mTvMySelectedTime.setText("10:00:00");
 
         // 通过日期字符串初始化日期，格式请用：HH:mm:ss
         mMyTimerPicker = new MyDatePicker(this, new MyDatePicker.Callback() {
             @Override
             public void onTimeSelected(long timestamp) {
                 String time = DateFormatUtils.long2Str2(timestamp);
-                mTvMySelectedTime.setText(time);
+//                mTvMySelectedTime.setText(time);
                 if (mTimeList.contains(time)) return;
                 mTimeAdapter.addData(time);
 
