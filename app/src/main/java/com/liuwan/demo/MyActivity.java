@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.liuwan.demo.datepicker.CustomDatePicker;
 import com.liuwan.demo.datepicker.DateFormatUtils;
 import com.liuwan.demo.datepicker.MyDatePicker;
 
